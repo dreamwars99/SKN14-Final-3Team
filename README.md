@@ -25,8 +25,8 @@
 
 
 ## 🔥프로젝트 소개
-### 서비스명: 우리 작은 국민이
-sLLM과 RAG(Retrieval-Augmented Generation)를 이용한 신입사원용 **업무 적응 도우미 시스템**입니다. 
+### 서비스명: KB FinAIssist
+sLLM과 RAG(Retrieval-Augmented Generation)를 이용한 신입사원용 **업무 적응 도우미 시스템**입니다.
 <br>은행 내규 자료와 금융 상품 사용설명서, 금융관련 법규, 여신 심사 데이터 등을 학습 및 데이터베이스화시켜서 특히 은행의 중요한 업무인 **여신업무**에 특화된 챗봇입니다.
 <br> 은행에는 수없이 많은 상품과 복잡한 여신업무가 존재하고 금융관련 기업 특성상 보안에 매우 민감합니다.
 <br>본 프로젝트는 보안을 sLLM으로 잡고, 수없이 많은 내규 자료를 RAG방식으로 찾아내어서 사원에게 정확하고 빠르게 전달합니다. 그리하여 사원들로 하여금 빠른 업무 진행을 가능하게 하고, 신입사원의 적응을 도와줄 수 있습니다.
@@ -98,12 +98,12 @@ sLLM과 RAG(Retrieval-Augmented Generation)를 이용한 신입사원용 **업�
 | :--- | :--- |
 | **Backend** | Python, Django |
 | **Frontend** | HTML, CSS, JavaScript, Bootstrap 5 |
-| **AI** | LangChain, LangGraph, OpenAI API |
+| **AI tool** | LangChain, LangGraph, OpenAI API |
 | **Web Design** | Figma |
 | **sLLM** | Qwen/Qwen2-7B-Instruct |
 | **Vector DB** | Chroma |
 | **File Storage** | AWS S3 |
-| **Deploy** | AWS EC2, Docker |
+| **Deploy** | AWS Elastic Beanstalk, Docker |
 | **Etc** | LlamaParser, Runpod |
 
 ---
@@ -125,30 +125,30 @@ KB 국민은행의 여신 사업을 진행하게 될 은행 사내 직원이 여
 ### 데이터 정제 과정
 수집한 원본 PDF는 문제 혹은 해설 및 도표 등이 혼합되어 있어, AI가 학습하기 좋은 형태로 가공하는 과정이 반드시 필요합니다.
 
-### 3. 데이터 흐름도 (Data Flow)
+### 데이터 흐름도 (Data Flow)
 
 ![Data Flow](02_system_architecture/data_flow.png)
 
 ---
 
-## 🚶 사용자 흐름도 (User Flow)
+### 🚶 사용자 흐름도 (User Flow)
 
 ![User Flow Diagram](02_system_architecture/user_flow.png)
 
 ---
-## 🏠 시스템 구성도
+### 🏠 시스템 구성도
 ![model_architecture](02_system_architecture/model_architecture.png)
 
 ---
 
 ## ✨ 구현 결과
-|            구현 화면            | 역할                           | 
+| 구현 화면 | 역할 | 
 |:---------------------------:|:-----------------------------|
-| ![image1](image/image1.png) | TBD                         |
-| ![image2](image/image2.png) | TBD      |
+| ![image1](image/image1.png) | TBD |
+| ![image2](image/image2.png) | TBD |
 | ![image3](image/image3.png) | TBD |
-| ![image4](image/image4.png) |TBD |
-| ![image5](image/image5.png) |TBD|
+| ![image4](image/image4.png) | TBD |
+| ![image5](image/image5.png) | TBD |
 | ![image6](image/image6.png) | TBD |
 
 
@@ -177,7 +177,7 @@ TBD
 
 ---
 
-### **🍀 기대효과 및 전략**
+### **🍀 기대효과**
 
 **1. 신입 행원의 '업무 적응 기간' 획기적 단축**
 *   AI 어시스턴트의 실시간 질의응답을 통해, 복잡한 여신 업무와 상품 지식을 스스로 학습하는 **'자기주도적 OJT'** 환경을 제공합니다.
