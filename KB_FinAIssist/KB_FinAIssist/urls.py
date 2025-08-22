@@ -21,6 +21,12 @@ from django.views.generic import RedirectView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("KB_FinAIssist/", include("app.urls")),   
+    path("KB_FinAIssist/", include("f_user.urls")),
+    path("todo/", include("f_todo.urls")),
+    path("calendar/", include("f_calendar.urls")),
+    path("chatbot/", include("f_chatbot.urls")),
+    path("customer/", include("f_customer.urls")),
+    path("document/", include("f_document.urls")),   
+    path("common/", include("f_common.urls")), 
     path("", RedirectView.as_view(url="/KB_FinAIssist/"), name="main"),
 ]

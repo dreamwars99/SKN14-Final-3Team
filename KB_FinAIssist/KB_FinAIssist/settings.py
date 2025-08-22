@@ -43,7 +43,13 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    "app",
+    'f_user',
+    'f_todo',
+    'f_calendar',
+    'f_chatbot',
+    'f_customer',
+    'f_document',
+    'f_common',
 ]
 
 MIDDLEWARE = [
