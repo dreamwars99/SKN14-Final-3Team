@@ -28,5 +28,6 @@ urlpatterns = [
     path("customer/", include("f_customer.urls")),
     path("document/", include("f_document.urls")),   
     path("common/", include("f_common.urls")), 
+    path("loan/", include("f_loan.urls")), 
     path("", RedirectView.as_view(url="/KB_FinAIssist/"), name="main"),
 ]
