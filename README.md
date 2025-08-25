@@ -7,10 +7,11 @@
 
 ## 👨‍💻 팀원 소개 및 역할
 #### 팀명: 존.사.배 (존중.사랑.배려)
-| **이수미** | **김의령** | **전정규** | **조성재** | **이승혁** |
-|:--:|:--:|:--:|:--:|:--:|
-| <img width="319" height="597" alt="AAAABZn0mnnCsplYpnJebeqRcmpiZZ0KGGwhZB6tyuOjWsFHsHvsmIE8g92xf37szk3vZ9AETrRGi44ZewWNkha1xGL4qwGa3hNT avif" src="https://github.com/user-attachments/assets/2347a4b4-798b-4b1b-892a-d35d2d11af4a" /> | <img width="326" height="604" alt="AAAABZn0mnnCsplYpnJebeqRcmpiZZ0KGGwhZB6tyuOjWsFHsHvsmIE8g92xf37szk3vZ9AETrRGi44ZewWNkha1xGL4qwGa3hNT avif(2)" src="https://github.com/user-attachments/assets/551be056-f358-4477-adc3-fd407175ed65" />  | <img width="272" height="488" alt="AAAABZn0mnnCsplYpnJebeqRcmpiZZ0KGGwhZB6tyuOjWsFHsHvsmIE8g92xf37szk3vZ9AETrRGi44ZewWNkha1xGL4qwGa3hNT avif(1)" src="https://github.com/user-attachments/assets/c9e62f15-e21b-4529-8c3d-19a98f507944" /> | <img width="301" height="593" alt="AAAABZn0mnnCsplYpnJebeqRcmpiZZ0KGGwhZB6tyuOjWsFHsHvsmIE8g92xf37szk3vZ9AETrRGi44ZewWNkha1xGL4qwGa3hNT" src="https://github.com/user-attachments/assets/acbfb44f-ff0e-4dee-a23f-ac60b9702b63" /> | <img width="261" height="505" alt="AAAABZn0mnnCsplYpnJebeqRcmpiZZ0KGGwhZB6tyuOjWsFHsHvsmIE8g92xf37szk3vZ9AETrRGi44ZewWNkha1xGL4qwGa3hNT (1)" src="https://github.com/user-attachments/assets/d271628b-c073-4a63-9b0c-bb8c1d6ef60c" />  |
-| PM | 대충 한 역할 | 대충 한 역할 | 대충 한 역할 | 대충 한 역할 |
+| **이수미** | **김의령** | **조성재** | **이승혁** |
+|:--:|:--:|:--:|:--:|
+| <img width="672" height="1536" alt="nano-banana_Draw_a_prospective_m" src="https://github.com/user-attachments/assets/b8424893-648d-4291-9513-d0b2c5c80783" />  |  <img width="1088" height="960" alt="undefined_Draw_a_prospective_m (3)" src="https://github.com/user-attachments/assets/8566a987-7815-4ba8-9b87-3e1c3e847eae" /> | <img width="1024" height="1024" alt="undefined_Draw_a_prospective_m2" src="https://github.com/user-attachments/assets/ff96ea56-4a98-441e-8858-fd6f0ef74564" />  | <img width="672" height="1536" alt="1756097615840-8ce471ec-6bcb-4ef7-9337-11881e90dda6" src="https://github.com/user-attachments/assets/22afed85-8284-49fb-8223-253db100f190" />
+ |
+| PM | RAG + LangGraph | sLLM Model | RAG + LangGraph |
 
 
 
@@ -228,7 +229,5 @@ TBD
 *   **김의령:** 
 
 *   **조성재:** 
-
-*   **전정규:**
 
 *   **이승혁:** 
