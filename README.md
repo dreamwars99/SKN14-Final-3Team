@@ -9,8 +9,7 @@
 #### 팀명: 존.사.배 (존중.사랑.배려)
 | **이수미** | **김의령** | **조성재** | **이승혁** |
 |:--:|:--:|:--:|:--:|
-| <img width="672" height="1536" alt="nano-banana_Draw_a_prospective_m" src="https://github.com/user-attachments/assets/b8424893-648d-4291-9513-d0b2c5c80783" />  |  <img width="1088" height="960" alt="undefined_Draw_a_prospective_m (3)" src="https://github.com/user-attachments/assets/8566a987-7815-4ba8-9b87-3e1c3e847eae" /> | <img width="1024" height="1024" alt="undefined_Draw_a_prospective_m2" src="https://github.com/user-attachments/assets/ff96ea56-4a98-441e-8858-fd6f0ef74564" />  | <img width="672" height="1536" alt="1756097615840-8ce471ec-6bcb-4ef7-9337-11881e90dda6" src="https://github.com/user-attachments/assets/22afed85-8284-49fb-8223-253db100f190" />
- |
+| <img width="672" height="1536" alt="nano-banana_Draw_a_prospective_m" src="https://github.com/user-attachments/assets/b8424893-648d-4291-9513-d0b2c5c80783" />  |  <img width="1088" height="960" alt="undefined_Draw_a_prospective_m (3)" src="https://github.com/user-attachments/assets/8566a987-7815-4ba8-9b87-3e1c3e847eae" /> | <img width="1024" height="1024" alt="undefined_Draw_a_prospective_m2" src="https://github.com/user-attachments/assets/ff96ea56-4a98-441e-8858-fd6f0ef74564" />  | <img width="672" height="1536" alt="1756097615840-8ce471ec-6bcb-4ef7-9337-11881e90dda6" src="https://github.com/user-attachments/assets/22afed85-8284-49fb-8223-253db100f190" /> |
 | PM | RAG + LangGraph | sLLM Model | RAG + LangGraph |
 
 
