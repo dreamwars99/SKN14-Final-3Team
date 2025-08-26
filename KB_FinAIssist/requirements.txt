@@ -1,6 +1,10 @@
 asgiref==3.9.1
 Django==5.2.5
+django-extensions==4.1
+Faker==37.5.3
 mysqlclient==2.2.7
 python-dotenv==1.1.1
+setuptools==80.9.0
 sqlparse==0.5.3
 tzdata==2025.2
+wheel==0.45.1
