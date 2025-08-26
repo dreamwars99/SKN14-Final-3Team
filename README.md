@@ -127,17 +127,17 @@ KB 국민은행의 여신 사업을 진행하게 될 은행 사내 직원이 여
 
 ### 데이터 흐름도 (Data Flow)
 
-![Data Flow](02_system_architecture/data_flow.png)
+TBD
 
 ---
 
 ### 🚶 사용자 흐름도 (User Flow)
 
-![User Flow Diagram](02_system_architecture/user_flow.png)
+TBD
 
 ---
 ### 🏠 시스템 구성도
-![model_architecture](02_system_architecture/model_architecture.png)
+TBD
 
 ---
 
