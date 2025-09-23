@@ -9,8 +9,8 @@
 #### 팀명: 존.사.배 (존중.사랑.배려)
 | **이수미** | **김의령** | **조성재** | **이승혁** |
 |:--:|:--:|:--:|:--:|
-| <img width="672" height="1536" alt="nano-banana_Draw_a_prospective_m" src="https://github.com/user-attachments/assets/b8424893-648d-4291-9513-d0b2c5c80783" />  |  <img width="1088" height="960" alt="undefined_Draw_a_prospective_m (3)" src="https://github.com/user-attachments/assets/8566a987-7815-4ba8-9b87-3e1c3e847eae" /> | <img width="672" height="1536" alt="1756097615840-8ce471ec-6bcb-4ef7-9337-11881e90dda6" src="https://github.com/user-attachments/assets/22afed85-8284-49fb-8223-253db100f190" />   | <img width="1024" height="1024" alt="undefined_Draw_a_prospective_m" src="https://github.com/user-attachments/assets/07810dd6-1893-47ed-bda9-ade2ac1599aa" /> |
-| PM | RAG + LangGraph | sLLM Model | RAG + LangGraph |
+| <img width="672" height="1536" alt="rumi" src="https://github.com/user-attachments/assets/333dbaa3-7d9c-4831-95a8-a84508f3c552" />  | <img width="1088" height="960" alt="mira" src="https://github.com/user-attachments/assets/6f17c73d-4096-49b2-94a6-57e84e7a5e70" />  | <img width="672" height="1536" alt="joey" src="https://github.com/user-attachments/assets/cd63908b-9c6f-448f-b59c-556e4765ccb2" />  | <img width="1024" height="1024" alt="derpy" src="https://github.com/user-attachments/assets/f145262a-97bb-4085-9a14-8444ab812e74" />  |
+| PM | RAG, LangGraph, Frontend | sLLM Model, vllm | Model, AWS |
 
 
 
@@ -69,9 +69,10 @@ sLLM과 RAG(Retrieval-Augmented Generation)를 이용한 신입사원용 **업�
 2. **완벽한 데이터 주권을 위한 'On-Premise' AI**
     - 보안 최우선으로 모든 시스템을 오프라인 생태계로 운영
 3. **RAG 시스템으로 정확한 답변 제공**
-    - 환각 제로를 추구하여 금융권 회사에 맞춤형 시스템 제공
+    - 출처 pdf 실시간 참조 기능으로 환각을 최소화하여 금융권 회사에 맞춤형 시스템 제공
 
----
+4. **머신 러닝 기반 여신 심사 시스템**
+    - 까다롭고 복잡한 여신 심사를 그간의 데이터로 90% 이상의 정확도로 쉽고 빠른 시스템 제공
 
 ## ⚙️주요기능
 
@@ -96,15 +97,15 @@ sLLM과 RAG(Retrieval-Augmented Generation)를 이용한 신입사원용 **업�
 
 | 구분 | 기술 |
 | :--- | :--- |
-| **Backend** | Python, Django |
-| **Frontend** | HTML, CSS, JavaScript, Bootstrap 5 |
+| **Backend** | Python, Fastapi |
+| **Frontend** | Django, HTML, CSS, JavaScript, Bootstrap 5 |
 | **AI tool** | LangChain, LangGraph, OpenAI API |
 | **Web Design** | Figma |
 | **sLLM** | Qwen/Qwen2-7B-Instruct |
-| **Vector DB** | Chroma |
+| **Vector DB** | Chroma, Pinecone, RDS |
 | **File Storage** | AWS S3 |
 | **Deploy** | AWS Elastic Beanstalk, Docker |
-| **Etc** | LlamaParser, Runpod |
+| **Etc** | LlamaParser, Runpod, vllm |
 
 ---
 
@@ -115,28 +116,95 @@ KB 국민은행의 여신 사업을 진행하게 될 은행 사내 직원이 여
 
 챗봇(자체 sLLM)이 정확한 답변 및 출처를 제공하기 위해 최신 법령/제도의 문서(PDF)위주 데이터 수집과 KB 국민은행의 내규 데이터와 여신업무 관련 문서 위주로 수집하였으며, 머신러닝 기반 대출 적정성 평가와 심사 결과 보고서 작성을 하기 위해 학습에 필요한 ‘대출 승인 분류 데이터 세트’를 Kaggle에서 수집했습니다.
 
+sLLM 용 데이터로는
+
+`Qwen/Qwen2.5-14B-Instruct` 모델의 파인튜닝에 최적화되어 있으며, 다음과 같은 세 가지 핵심 요소의 균형을 맞춰 구성했습니다.
+
+*   **KB금융 특화 지식**: KB금융그룹 내부 문서를 기반으로 생성된 Q&A
+*   **고품질 금융 상식**: 신뢰도 높은 한국 금융 지시(Instruction) 데이터
+*   **자연스러운 일상 대화**: 일반적인 질문에 대한 대응 및 모델 페르소나 형성을 위한 데이터
+
 ### 데이터 및 출처
 
 *   KB 국민은행, 여신금융협회, 금융감독원, Kaggle
 
 데이터 전처리 과정에서는 PDF 문서를 단순히 불러오는 것만으로는 충분하지 않다는 점을 유의해야 합니다. 예를 들어, PDF 문서의 특성상 표, 이미지, 각주, 머리말·꼬리말, 불필요한 공백이나 줄바꿈 등이 그대로 텍스트로 추출되면 문장이 끊기거나 의미가 왜곡될 수 있습니다. 또한 약관, 규정, 상품설명서와 같은 금융 문서들은 법률적 용어와 긴 문장이 많아 작은 오류만 있어도 검색이나 질의응답 시 부정확한 결과가 발생할 수 있습니다. 이러한 문제를 해결하기 위해서는 단순 로더(loader)를 통한 불러오기보다는 파서(parser)를 활용하여 텍스트 구조를 보다 정교하게 추출하고, 이후 불필요한 기호 제거, 문장 단위 분할, 표준화와 같은 전처리를 거쳐야 합니다. 최종적으로는 이러한 전처리 과정을 통해 데이터의 품질을 확보함으로써 RAG 시스템에서의 검색 정확도를 높이고, 파인튜닝 데이터셋 역시 안정적으로 구축할 수 있습니다.
 
+### sLLM 학습용 데이터셋
 
-### 데이터 정제 과정
-수집한 원본 PDF는 문제 혹은 해설 및 도표 등이 혼합되어 있어, AI가 학습하기 좋은 형태로 가공하는 과정이 반드시 필요합니다.
+`Qwen/Qwen2.5` 모델 시리즈의 파인튜닝에 최적화되어 있으며, 벤치마크 성능 개선을 위해 **순수 금융 데이터**로만 구성하여 모델의 전문성을 극대화하는 것을 목표로 합니다.
 
-### 데이터 흐름도 (Data Flow)
+*   **KB금융 특화 지식**: KB금융그룹 내부 문서를 기반으로 생성된 Q&A
+*   **다양한 유형의 금융 지식**: 일반적인 금융 질의응답(QA)과 객관식 문제(MCQA)를 모두 포함하여 종합적인 금융 이해력 학습을 유도합니다.
+
+**핵심 특징**: 일상 대화 데이터를 제외하고, `aiqwe/FinShibainu`의 QA 및 MCQA 데이터를 대량으로 추가하여 **금융 도메인에 완전히 집중**하도록 데이터셋을 구성했습니다.
+
+### 📊 데이터 소스 및 구성
+
+총 **31,157건**의 데이터를 아래와 같은 소스에서 조합하고 샘플링했습니다.
+
+| 데이터 종류     | 원본 데이터셋                                                                      | 사용 건수         | 내용                                           |
+| --------------- | ---------------------------------------------------------------------------------- | ----------------- | ---------------------------------------------- |
+| **KB 특화 데이터**  | `rucipheryn/KB-sLLM-QA-Dataset-Final-Split`                                        | `1,157건` (전체)  | KB금융 관련 PDF 문서에서 추출한 Q&A            |
+| **금융 QA 데이터** | `aiqwe/FinShibainu` (qa 스플릿)                                                            | `15,000건` (샘플링) | 일반적인 금융 관련 질의응답 데이터 |
+| **금융 MCQA 데이터** | `aiqwe/FinShibainu` (mcqa 스플릿)                                                            | `15,000건` (샘플링) | 객관식 금융 문제 및 정답 데이터 |
+
+## 📂 데이터 구조
+
+모든 데이터는 최종적으로 `Qwen/Qwen2.5` 모델 시리즈의 공식 챗 템플릿이 적용된 단일 `text` 컬럼으로 구성됩니다.
+
+*   **데이터 필드**: `text` (string)
+*   **분할 정보**:
+    *   `train`: 29,599건 (95%)
+    *   `test`: 1,558건 (5%)
+
+#### QA 데이터 예시
+
+```python
+<|im_start|>system
+You are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>
+<|im_start|>user
+주식집단의 매도와 동시에 매수하는 선물거래의 의미는 무엇인가요?<|im_end|>
+<|im_start|>assistant
+주식집단의 매도와 동시에 매수하는 선물거래는 주식 시장에서의 헤지(hedging) 전략 또는 차익 거래(arbitrage) 전략으로 이해할 수 있습니다... (이하 답변) ...<|im_end|>
+```
+#### MCQA 데이터 예시 (특별 전처리 적용)
+
+객관식 문제는 질문과 보기를 합쳐 `user`의 content로 구성하고, `assistant`의 content는 정답에 해당하는 **알파벳**을 포함하도록 변환했습니다.
+
+```python
+<|im_start|>system
+You are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>
+<|im_start|>user
+T/T 방식의 증가와 신용장 방식의 감소가 시사하는 점은?
+
+A. 은행 간 자금 이동의 신속성이 거래 보안보다 중시된다
+
+B. 기업 간의 신뢰도가 무역 거래의 중요한 요소로 부각된다
+
+C. 무역 거래에서 서류의 역할이 강화되고 있다
+
+D. 금융 기관의 중개 역할이 강화되고 있다<|im_end|>
+<|im_start|>assistant
+B<|im_end|>
+```
+### 최종 데이터셋
+
+[🖥️ 데이터셋 링크](https://huggingface.co/datasets/rucipheryn/combined-dataset-30K-final-v4)
+
+
+## 데이터 흐름도 (Data Flow)
 
 TBD
 
 ---
 
-### 🚶 사용자 흐름도 (User Flow)
+## 🚶 사용자 흐름도 (User Flow)
 
 TBD
 
 ---
-### 🏠 시스템 구성도
+## 🏠 시스템 구성도
 TBD
 
 ---
@@ -144,18 +212,18 @@ TBD
 ## ✨ 구현 결과
 | 구현 화면 | 역할 | 
 |:---------------------------:|:-----------------------------|
-| ![image1](image/image1.png) | TBD |
-| ![image2](image/image2.png) | TBD |
-| ![image3](image/image3.png) | TBD |
-| ![image4](image/image4.png) | TBD |
-| ![image5](image/image5.png) | TBD |
-| ![image6](image/image6.png) | TBD |
+| ![로그인 화면](images/webapp/login.png) | 로그인 페이지 |
+| ![메인 화면](images/webapp/main.png) | 메인 화면 |
+| ![문서 참조 화면](images/webapp/main2.png) | 메인 화면 2 |
+| ![image4](images/image4.png) | TBD |
+| ![image5](images/image5.png) | TBD |
+| ![image6](images/image6.png) | TBD |
 
 
 ## 💯 성능 개선
 ### 기능 개선 
 
-TBD
+
 
 ### 프롬프트 개선
 #### TBD
@@ -199,26 +267,35 @@ TBD
 
 ### **🌱 향후 발전 가능성 (Future Work)**
 
-**1. [핵심] '살아있는 지식 허브': 자동화된 RAG 업데이트 시스템 구축**
-*   **현재:** 모델팀이 수동으로 문서를 수집하고 전처리하여 RAG 시스템을 업데이트합니다.
-*   **미래:** 은행 내부 담당자가 **수시로 변경되는 내규나 신상품 설명서 PDF를 웹앱에 직접 업로드**하면, 시스템이 이를 **자동으로 파싱, 전처리, 청킹, 임베딩하여 Vector DB에 즉시 반영**하는 '완전 자동화' 파이프라인을 구축합니다.
-    *   *기대효과: AI 어시스턴트가 항상 최신 정보를 유지하며, 유지보수 비용을 제로에 가깝게 만듭니다.*
-
-**2. 'AI 심사역'으로의 진화: XAI 시스템 고도화**
+**1. 'AI 심사역'으로의 진화: XAI 시스템 고도화**
 *   현재의 텍스트 기반 XAI를 넘어, 고객의 재무 상태 변화에 따른 **대출 승인 확률 변화를 실시간으로 시뮬레이션**하고, 그 결과를 그래프로 시각화하는 **인터랙티브 대시보드**를 도입합니다.
 *   "만약 이 회사의 매출이 10% 증가한다면?" 과 같은 가상 시나리오 분석을 통해, 선제적인 리스크 관리와 컨설팅이 가능한 'AI 심사역'으로 발전시킵니다.
 
-**3. '개인화'된 학습 경험 제공**
+**2. '개인화'된 학습 경험 제공**
 *   신입 행원의 질문 이력을 데이터베이스에 저장하고 분석하여, **자주 묻는 질문이나 취약한 업무 분야를 파악**합니다.
 *   이를 바탕으로 관련 규정이나 상품 정보를 자동으로 추천해주는 **'맞춤형 학습 푸시 알림'** 기능을 도입하여, 개인별 성장을 지원합니다.
 
-**4. '음성' 기반 업무 영역으로의 확장**
+**3. '음성' 기반 업무 영역으로의 확장**
 *   고객과의 통화 내용을 실시간으로 텍스트 변환(STT)하고, 대화의 핵심(고객 니즈, 불만사항 등)을 자동으로 요약하여 **'통화 리포트'를 자동 생성**하는 기능을 추가합니다.
 *   이를 통해 영업점의 업무 부담을 줄이고, 고객 응대 품질을 데이터 기반으로 분석 및 개선합니다.
 
-**5. 서비스 확장 및 생태계 구축**
+**4. 서비스 확장 및 생태계 구축**
 *   여신 업무를 넘어, **수신(예/적금), 외환, PB(자산관리)** 등 다른 은행 업무 분야로 AI 어시스턴트의 지식 범위를 확장합니다.
 *   신입 행원들이 AI와의 대화 기록이나 보고서 초안을 공유하며 토론하는 **'업무 지식 커뮤니티'** 기능을 도입하여, 집단 지성을 통한 성장을 촉진합니다.
+
+---
+
+## 🌟 향후 발전 방향
+
+**1. 모델 성능 고도화: 챗봇 품질의 지속적 향상**
+*   현재 7B 모델을 14B, 27B 등 더 큰 파라미터의 모델로 확장하고, 지속적으로 최신 금융 데이터를 추가 학습시켜 질의응답의 정확성과 깊이를 향상시킵니다.
+
+**2. 실무 적용성 강화: On-Premise 배포 및 시스템 통합**
+*   실제 기업의 요구에 맞춰, 내부 기밀 데이터베이스와 안전하게 연동하는 On-Premise 배포를 지원합니다. 이를 통해 단순 업무 보조를 넘어, 실제 여신 심사 프로세스에 직접 통합되는 핵심 시스템으로 발전시킬 수 있습니다.
+
+**3. 솔루션 확장성 확보: 타 금융기관으로의 적용**
+*   현재 KB국민은행에 특화된 데이터와 디자인을 모듈화하여, 타 은행, 증권사, 보험사 등 다양한 금융 기관의 특성에 맞게 신속하게 커스터마이징할 수 있는 범용 솔루션으로 발전시킵니다.
+
 
 ---
 
@@ -230,5 +307,7 @@ TBD
 *   **조성재:** 
 
 *   **이승혁:** 
+
+
 =======
 Repository for SKN14-Final-3Team
