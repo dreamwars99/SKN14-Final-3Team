@@ -9,7 +9,7 @@
 #### 팀명: 존.사.배 (존중.사랑.배려)
 | **이수미** | **김의령** | **조성재** | **이승혁** |
 |:--:|:--:|:--:|:--:|
-| <img width="672" height="1536" alt="이수미 프로필 이미지" src="images/characters/rumi.png" />  |  <img width="1088" height="960" alt="김의령 프로필 이미지" src="images/characters/mira.png" /> | <img width="672" height="1536" alt="조성재 프로필 이미지" src="images/characters/joey.png" />   | <img width="1024" height="1024" alt="이승혁 프로필 이미지" src="images/characters/derpy.png" /> |
+| <img width="672" height="1536" alt="rumi" src="https://github.com/user-attachments/assets/333dbaa3-7d9c-4831-95a8-a84508f3c552" />  | <img width="1088" height="960" alt="mira" src="https://github.com/user-attachments/assets/6f17c73d-4096-49b2-94a6-57e84e7a5e70" />  | <img width="672" height="1536" alt="joey" src="https://github.com/user-attachments/assets/cd63908b-9c6f-448f-b59c-556e4765ccb2" />  | <img width="1024" height="1024" alt="derpy" src="https://github.com/user-attachments/assets/f145262a-97bb-4085-9a14-8444ab812e74" />  |
 | PM | RAG, LangGraph, Frontend | sLLM Model, vllm | Model, AWS |
 
 
