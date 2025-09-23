@@ -71,7 +71,8 @@ sLLM과 RAG(Retrieval-Augmented Generation)를 이용한 신입사원용 **업�
 3. **RAG 시스템으로 정확한 답변 제공**
     - 출처 pdf 실시간 참조 기능으로 환각을 최소화하여 금융권 회사에 맞춤형 시스템 제공
 
----
+4. **머신 러닝 기반 여신 심사 시스템**
+    - 까다롭고 복잡한 여신 심사를 그간의 데이터로 90% 이상의 정확도로 쉽고 빠른 시스템 제공
 
 ## ⚙️주요기능
 
@@ -129,7 +130,6 @@ sLLM 용 데이터로는
 
 데이터 전처리 과정에서는 PDF 문서를 단순히 불러오는 것만으로는 충분하지 않다는 점을 유의해야 합니다. 예를 들어, PDF 문서의 특성상 표, 이미지, 각주, 머리말·꼬리말, 불필요한 공백이나 줄바꿈 등이 그대로 텍스트로 추출되면 문장이 끊기거나 의미가 왜곡될 수 있습니다. 또한 약관, 규정, 상품설명서와 같은 금융 문서들은 법률적 용어와 긴 문장이 많아 작은 오류만 있어도 검색이나 질의응답 시 부정확한 결과가 발생할 수 있습니다. 이러한 문제를 해결하기 위해서는 단순 로더(loader)를 통한 불러오기보다는 파서(parser)를 활용하여 텍스트 구조를 보다 정교하게 추출하고, 이후 불필요한 기호 제거, 문장 단위 분할, 표준화와 같은 전처리를 거쳐야 합니다. 최종적으로는 이러한 전처리 과정을 통해 데이터의 품질을 확보함으로써 RAG 시스템에서의 검색 정확도를 높이고, 파인튜닝 데이터셋 역시 안정적으로 구축할 수 있습니다.
 
-
 ### sLLM 학습용 데이터셋
 
 `Qwen/Qwen2.5` 모델 시리즈의 파인튜닝에 최적화되어 있으며, 벤치마크 성능 개선을 위해 **순수 금융 데이터**로만 구성하여 모델의 전문성을 극대화하는 것을 목표로 합니다.
@@ -160,17 +160,19 @@ sLLM 용 데이터로는
 
 #### QA 데이터 예시
 
+```python
 <|im_start|>system
 You are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>
 <|im_start|>user
 주식집단의 매도와 동시에 매수하는 선물거래의 의미는 무엇인가요?<|im_end|>
 <|im_start|>assistant
 주식집단의 매도와 동시에 매수하는 선물거래는 주식 시장에서의 헤지(hedging) 전략 또는 차익 거래(arbitrage) 전략으로 이해할 수 있습니다... (이하 답변) ...<|im_end|>
-
+```
 #### MCQA 데이터 예시 (특별 전처리 적용)
 
 객관식 문제는 질문과 보기를 합쳐 `user`의 content로 구성하고, `assistant`의 content는 정답에 해당하는 **알파벳**을 포함하도록 변환했습니다.
 
+```python
 <|im_start|>system
 You are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>
 <|im_start|>user
@@ -185,10 +187,10 @@ C. 무역 거래에서 서류의 역할이 강화되고 있다
 D. 금융 기관의 중개 역할이 강화되고 있다<|im_end|>
 <|im_start|>assistant
 B<|im_end|>
-
+```
 ### 최종 데이터셋
 
-[허깅페이스 링크](https://huggingface.co/datasets/rucipheryn/combined-dataset-30K-final-v4)
+[🖥️ 데이터셋 링크](https://huggingface.co/datasets/rucipheryn/combined-dataset-30K-final-v4)
 
 
 ## 데이터 흐름도 (Data Flow)
