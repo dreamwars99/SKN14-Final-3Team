@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}KB국민은행 직원 업무시스템 - 여신 심사사{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/credit_assessment.css' %}">
+{% endblock %}
+
+
+{% block content %}
+<!-- 챗봇 컨테이너 -->
+<div class="credit_assessment_container">
+    <div class="credit_assessment_content">
+        <!-- Team Channel Column (팀 채팅) -->
+        {% include 'partials/team_channel_column.html' %}
+        
+        <!-- 두 번째 컬럼 - 고객 정보 입력 및 대출 정보 입력 -->
+        {% include 'credit_assessment/customer_input_column.html' %}
+        
+        <!-- 세 번째 컬럼 - 심사 결과 표시 영역 -->
+        {% include 'credit_assessment/assessment_results_column.html' %}
+        
+        <!-- 네 번째 컬럼 - 저장된 보고서 목록 -->
+        {% include 'credit_assessment/reports_column.html' %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="{% static 'js/partials/team_channel_column.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="{% static 'js/credit_assessment/credit_assessment.js' %}"></script>
+<script src="{% static 'js/credit_assessment/reports_column.js' %}"></script>
+{% endblock %}

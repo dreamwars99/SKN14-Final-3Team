@@ -1,0 +1,279 @@
+@import '../base';
+
+// 네 번째 컬럼 - 저장된 보고서 목록
+.fourth_column {
+    grid-column: 4;
+    min-height: 0;
+    padding: ptr(10px);
+    display: flex;
+    flex-direction: column;
+    gap: ptr(10px);
+    width: 100%;
+    border-left: 1px solid $kb-border;
+    
+    .saved_reports_column {
+        display: flex;
+        flex-direction: column;
+        gap: ptr(10px);
+        width: 100%;
+        height: 100%;
+        max-height: 100vh;
+        
+        // 보고서 컬럼 헤더
+        .reports_column_header {
+            display: flex;
+            flex-direction: column;
+            gap: ptr(5px);
+            width: 100%;
+            border-bottom: 1px solid $kb-border;
+            padding-bottom: ptr(10px);
+            
+            .report_upload_section, .report_search_section {
+                display: flex;
+                align-items: center;
+                width: 100%;
+                cursor: pointer;
+                padding: ptr(6px) ptr(10px) ptr(6px) ptr(6px);
+                border-radius: ptr(6px);
+
+                .report_icon, .search_icon {
+                    @include flex-center;
+                    width: ptr(20px);
+                    height: ptr(20px);
+                    color: $kb-dark;
+                    
+                    i {
+                        font-size: ptr(10px);
+                    }
+                }
+                .report_upload_title, .report_search_title {
+                    font-size: ptr(12px);
+                    font-weight: 400;
+                    color: $kb-text-dark;
+                    padding-left: ptr(5px);
+                }
+
+                .report_upload_shortcut, .report_search_shortcut {
+                    display: flex;
+                    justify-content: flex-end;
+                    font-size: ptr(10px);
+                    font-weight: 400;
+                    color: $kb-text-light;
+                    margin-left: auto;
+                    opacity: 0;
+                    transition: opacity 0.2s ease;
+                }
+
+                &:hover {
+                    background-color: $kb-background-gray;
+                    border-radius: ptr(6px);
+                    
+                    .report_upload_shortcut, .report_search_shortcut {
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+
+        // 통합 보고서 섹션
+        .unified_reports_section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            
+            .unified_reports_header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-left: ptr(8px);
+                padding-right: ptr(8px);
+                padding-bottom: ptr(10px);
+                
+                .unified_reports_title {
+                    font-size: ptr(12px);
+                    font-weight: 500;
+                    color: $kb-text-dark;
+                }
+                
+                .report_count {
+                    font-size: ptr(10px);
+                    color: $kb-text-light;
+                    background-color: $kb-background-gray;
+                    padding: ptr(2px) ptr(6px);
+                    border-radius: ptr(10px);
+                }
+            }
+
+            .unified_reports_list {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: ptr(10px);
+                overflow-y: auto;
+                min-height: 0;
+                max-height: 400px;
+                padding: ptr(8px);
+
+                &::-webkit-scrollbar {
+                    width: ptr(6px);
+                }
+                
+                &::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+                
+                &::-webkit-scrollbar-thumb {
+                    background: rgba($kb-text-light, 0.3);
+                    border-radius: ptr(3px);
+                    transition: background 0.2s ease;
+                    
+                    &:hover {
+                        background: rgba($kb-text-light, 0.5);
+                    }
+                }
+            }
+
+            .report_item {
+                display: flex;
+                gap: ptr(12px);
+                padding: ptr(5px) ptr(10px);
+                cursor: pointer;
+
+                &:hover {
+                    background-color: $kb-background-gray;
+                }
+
+                .report_content {
+                    flex: 1;
+                    min-width: 0;
+
+                    .report_header {
+                        display: flex;
+                        align-items: start;
+                        margin-bottom: ptr(6px);
+
+                .report_thumbnail {
+                            border-left: 2px solid $kb-dark;
+                            padding-left: ptr(3px);
+                            margin-right: ptr(3px);
+                            height: ptr(10px);
+                            align-self: stretch;
+                            margin-top: ptr(4px);
+                        }
+                    
+                    .report_name {
+                            flex: 1;
+                        font-size: ptr(10px);
+                            color: $kb-dark;
+                        font-weight: 500;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap; 
+                        }
+                    }
+                    
+                    .report_meta {
+                        display: flex;
+                        align-items: center;
+                        gap: ptr(8px);
+                        margin-left: ptr(13px);
+                        
+                        .report_type {
+                            font-size: ptr(9px);
+                            background: $kb-border;
+                            padding: ptr(1px) ptr(6px);
+                            border-radius: ptr(4px);
+                            font-weight: 500;
+                        }
+                        
+                        .report_date {
+                        font-size: ptr(9px);
+                        color: $kb-text-light;
+                        }
+                    }
+                }
+
+                .report_actions {
+                    display: flex;
+                    gap: ptr(5px);
+                    flex-shrink: 0;
+                    
+                    .action_icon {
+                    @include flex-center;
+                        width: ptr(20px);
+                        height: ptr(20px);
+                    cursor: pointer;
+                        border-radius: ptr(4px);
+                    transition: all 0.2s ease;
+                        opacity: 0.6;
+                        
+                        &:hover {
+                            opacity: 1;
+                            transform: scale(1.1);
+                        }
+                        
+                        i {
+                            font-size: ptr(12px);
+                        }
+                        
+                        &.download_icon {
+                            color: #64748b;
+                            
+                            &:hover {
+                                color: #10b981;
+                            }
+                        }
+                        
+                        &.delete_icon {
+                            color: #64748b;
+                            
+                            &:hover {
+                                color: #ef4444;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // 보고서 컬럼 푸터
+        .reports_column_footer {
+            border-top: 1px solid $kb-border;
+            padding: ptr(8px);
+            flex-shrink: 0;
+            height: auto;
+            
+            .report_viewer_section, .report_management_section {
+                display: flex;
+                align-items: center;
+                gap: ptr(8px);
+                cursor: pointer;
+                padding: ptr(6px) ptr(10px) ptr(6px) ptr(6px);
+                border-radius: ptr(6px);
+
+                &:hover {
+                    background-color: $kb-background-gray;
+                    border-radius: ptr(6px);
+                }
+                
+                .viewer_icon, .management_icon {
+                    @include flex-center;
+                    width: ptr(20px);
+                    height: ptr(20px);
+                    color: $kb-dark;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    i {
+                        font-size: ptr(10px);
+                    }
+                }
+            }
+
+            .report_viewer_title, .report_management_title {
+                font-size: ptr(12px);
+                font-weight: 400;
+                color: $kb-text-dark;
+            }
+        }
+    }
+}
