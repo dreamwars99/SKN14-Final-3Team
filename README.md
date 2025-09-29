@@ -53,6 +53,7 @@ sLLM과 RAG(Retrieval-Augmented Generation)를 이용한 신입사원용 **업�
 5) 디지털 전환과 구조 불일치 : 점포 축소와 채용 축소가 병행되는 상황에서, 창구 중심의 인력 구조는 디지털 전략과 상충하며 조직의 민첩성을 저해합니다.
 
 
+
 #### 문제 해결 방향 및 기대효과
 저희 팀은 이러한 현실적 문제를 해결하고자, 자체 sLLM 기반 사내 업무 지원 플랫폼 도입을 제안드립니다.
 1) OJT 효과 극대화 : 금융 지식 및 업무 프로세스를 신속하게 습득할 수 있도록 자동화 보조 제공
@@ -80,7 +81,7 @@ sLLM과 RAG(Retrieval-Augmented Generation)를 이용한 신입사원용 **업�
     
     - 사내 상품, 관련 법률·제도, 재무제표, 경제 지표에 대해 전문가 수준의 자문 제공
     - 사내 데이터와 공공데이터를 통합한 RAG 기반 검색 + 응답
-        - 기능: 자연어 질의 → 사내 문서+외부문서 검색·리랭크 → 정확한 답변 + 출처(문서ID) 인용 / 요약.
+        - 기능: 자연어 질의 -> 사내 문서+외부문서 검색·리랭크 -> 정확한 답변 + 출처(문서ID) 인용 / 요약.
         - RAG에 기능에서 PDF 파일은 사용자의 질문에 따라 유사도가 높은 기업 문서들을 보여주기
         - 캡쳐나 복붙은 불가하게
 
@@ -106,6 +107,58 @@ sLLM과 RAG(Retrieval-Augmented Generation)를 이용한 신입사원용 **업�
 | **File Storage** | AWS S3 |
 | **Deploy** | AWS Elastic Beanstalk, Docker |
 | **Etc** | LlamaParser, Runpod, vllm |
+
+## 📂 프로젝트 구조
+본 프로젝트의 주요 디렉토리 구조와 역할은 다음과 같습니다.
+- **`AI/`**: sLLM의 파인튜닝, 평가, FastAPI를 이용한 모델 서빙 API 관련 모든 코드를 포함합니다.
+- **`Web/`**: 사용자가 직접 사용하는 Django 기반 웹 애플리케이션의 프론트엔드와 백엔드 코드를 포함합니다.
+- **`docs/`**: 프로젝트 기획, 설계, 최종 보고서 등 주요 산출물 문서를 관리합니다.
+- **`images/`**: README와 프로젝트 문서에 사용되는 다이어그램 및 스크린샷 이미지를 포함합니다.
+
+## 🚀 시작하기
+이 섹션은 프로젝트를 로컬 환경에 설치하고 실행하는 방법을 안내합니다.
+
+### 사전 요구사항
+*   Python 3.9+
+*   Docker (선택 사항)
+*   기타 필요한 라이브러리는 각 폴더의 `requirements.txt` 파일을 참고하세요.
+
+### 설치 및 실행
+1.  **리포지토리 복제**
+    ```bash
+    git clone https://github.com/SKN14-Final-3Team/SKN14-Final-3Team.git
+    cd SKN14-Final-3Team
+    ```
+
+2.  **웹 애플리케이션 (Django)**
+    ```bash
+    cd Web
+    pip install -r requirements.txt
+    python manage.py migrate
+    python manage.py runserver
+    ```
+    웹 브라우저에서 `http://127.0.0.1:8000`으로 접속하여 확인합니다.
+
+3.  **AI 서버 (FastAPI)**
+    ```bash
+    cd AI
+    pip install -r requirements.txt
+    uvicorn run_server:app --host 0.0.0.0 --port 8001 --reload
+    ```
+    AI 서버는 `8001` 포트에서 실행되며, 웹 애플리케이션의 요청을 처리합니다.
+
+### 환경 변수
+본 프로젝트는 API 키 및 데이터베이스 설정과 같은 민감한 정보를 환경 변수를 통해 관리합니다. 각 애플리케이션(`Web`, `AI`)의 루트 디렉토리에 `.env` 파일을 생성하고 아래 내용을 참고하여 구성해야 합니다.
+
+`.env.example`
+```
+# .env.example
+DB_HOST=your_db_host
+DB_NAME=your_db_name
+...
+OPENAI_API_KEY=your_api_key
+```
+*자세한 환경 변수 목록은 `Web/config.py` 및 `AI/src/config.py`를 참고하세요.*
 
 ---
 
@@ -138,6 +191,17 @@ sLLM 용 데이터로는
 *   **다양한 유형의 금융 지식**: 일반적인 금융 질의응답(QA)과 객관식 문제(MCQA)를 모두 포함하여 종합적인 금융 이해력 학습을 유도합니다.
 
 **핵심 특징**: 일상 대화 데이터를 제외하고, `aiqwe/FinShibainu`의 QA 및 MCQA 데이터를 대량으로 추가하여 **금융 도메인에 완전히 집중**하도록 데이터셋을 구성했습니다.
+
+
+#### 데이터 믹싱 및 분할 전략
+*   KB 특화 Q&A와 `aiqwe/FinShibainu` QA·MCQA 데이터를 `datasets.concatenate_datasets`로 결합해 총 31,157문항을 구성했습니다.
+*   `shuffle(seed=42)`로 데이터를 재배열한 뒤 `train_test_split(test_size=0.05)`로 학습:검증 비율을 95:5로 고정해 지표 변동성을 줄였습니다.
+*   DPO 단계에서는 `aiqwe/FinShibainu` 선호쌍과 `javirandor/hh-rlhf-safety-v3-dpo`를 혼합해 금융 맥락을 유지하면서도 안전성 신호를 강화했습니다.
+
+#### 프롬프트 템플릿 구성
+*   Qwen Chat Template를 적용해 `<|im_start|>system`, `<|im_start|>user`, `<|im_start|>assistant` 메시지 구조로 변환하고 역할별 컨텍스트를 명확히 분리했습니다.
+*   SFT 데이터는 질의와 답변을 role 배열로 매핑하고, DPO 데이터는 `prompt`·`chosen`·`rejected` 삼중 구조를 유지해 선호 학습이 정상 동작하도록 구성했습니다.
+*   모든 텍스트를 4,096 토큰 이내로 정규화해 RunPod H100 GPU 메모리 사용량과 배치 안정성을 확보했습니다.
 
 ### 📊 데이터 소스 및 구성
 
@@ -188,26 +252,274 @@ D. 금융 기관의 중개 역할이 강화되고 있다<|im_end|>
 <|im_start|>assistant
 B<|im_end|>
 ```
+### 모델 구성 개요
+
+*   sLLM은 KB 금융 도메인 문서를 학습한 Qwen/Qwen2.5-7B-Instruct 기반 모델로, 감독학습(SFT)과 DPO를 거쳐 규정 친화적인 답변을 제공합니다.
+*   LangGraph RAG 파이프라인이 의도 분류, 문서 검색, 정책 가드레일을 처리하고 최종 응답은 RunPod H100(vLLM)에서 서빙되는 sLLM이 생성합니다.
+*   Django ↔ FastAPI 백엔드가 vLLM 엔드포인트와 연결되며 세부 운영 절차는 `docs/12. LLM 활용 프로젝트계획.docx`, `docs/13. 전체 LLM 이력서.docx`에 정리되어 있습니다.
+
+| 구성 단계 | 사용 모델 / 리소스 | 주요 역할 | 배포 및 참고 |
+| --- | --- | --- | --- |
+| Base Prompt Model | Qwen/Qwen2.5-7B-Instruct | 공개 7B 인스트럭션 모델, 금융 도메인 파인튜닝 출발점 | Hugging Face Hub |
+| SFT Checkpoint | `sssssungjae/qwen2_5-7b-instruct-finance-full-final-15_15` | KB 규정/QA/MCQA 데이터로 감독 학습한 중간 체크포인트 | RunPod SFT, `docs/13. 전체 LLM 이력서.docx` |
+| DPO Checkpoint (Production sLLM) | `sssssungjae/qwen2.5-dpo-shi2` | 선호도 데이터로 보강한 최종 서비스 모델, 규정 준수 답변 강화 | RunPod vLLM Endpoint |
+| Guardrail LLM | ChatOpenAI (`MODEL_NAME`) | LangGraph guardrail/structured output 노드에서 정책 검증과 메타데이터 추출 | Elastic Beanstalk .env 설정 |
+
+### 추론 파이프라인 (RAG + sLLM)
+
+1. 사용자의 질문은 Django → FastAPI → LangGraph Intent Router 순으로 전달되어 업무/규정/FAQ 시나리오를 판별합니다.
+2. 선택된 시나리오에 따라 Chroma 벡터스토어(Pinecone 백엔드)에 적재된 KB 내규, 금융 교육 자료, 사용자 업로드 문서를 검색합니다.
+3. 검색된 컨텍스트와 시스템 프롬프트를 RunPod vLLM 상의 `sssssungjae/qwen2.5-dpo-shi2`에게 전달하여 도메인 특화 응답을 생성합니다.
+4. LangGraph Guardrail 노드가 동일한 sLLM과 정책 룰셋(`src/langgraph/guardrails/*.yaml`)을 활용해 금지 표현 필터링, 출처 태깅, JSON 구조화 응답을 수행합니다.
+5. 최종 응답과 근거 문서는 FastAPI → Django 백엔드를 거쳐 Web 챗봇 UI에 반환되고, 필요한 경우 MySQL/S3에 이력으로 저장됩니다.
+
+### 모델 성능 및 최종 선택
+
+*   lm-eval-harness 기반 벤치마크에서 Financial-MMLU-KO 0.7495, ArenaHard 71.8, KoBEST 0.60 등(아래 표)으로 DPO 체크포인트가 가장 안정적인 결과를 보였습니다.
+*   동일 조건의 SFT 체크포인트는 보수적인 규정 질문에서 높은 정확도를 보였으나, DPO 모델이 난이도 높은 ArenaHard/HAERAE 시나리오까지 균형 잡힌 답변 품질을 확보했습니다.
+*   평가 및 운영 절차는 `docs/13. 전체 LLM 이력서.docx`, `docs/14. 테스트 계획 및 결과 보고서.docx`, `evaluation/performance_evaluator.py`에 문서화되어 있어 재현 가능한 형태로 관리됩니다.
+
 ### 최종 데이터셋
 
 [🖥️ 데이터셋 링크](https://huggingface.co/datasets/rucipheryn/combined-dataset-30K-final-v4)
 
+## sLLM 학습·튜닝 파이프라인
 
-## 데이터 흐름도 (Data Flow)
+### 환경 구성
+*   RunPod(NVIDIA H100 80GB, vLLM)에서 Docker 컨테이너로 학습과 추론 인프라를 분리해 가동 중단 없이 업데이트할 수 있도록 설계했습니다.
+*   Unsloth와 Hugging Face `trl`을 결합해 메모리 사용량을 줄였습니다.
+*   학습 산출물은 Hugging Face Hub(`sssssungjae/qwen2_5-7b-instruct-finance-full-final-15_15`, `sssssungjae/qwen2.5-dpo-shi2`)로 버전 관리합니다.
 
-TBD
+### 학습 절차
+1. **데이터 정제**: PDF 기반 원문을 파서로 정규화하고, chat template에 맞춘 role 시퀀스를 생성합니다.
+2. **SFT**: `Qwen/Qwen2.5-7B-Instruct`를 2 epoch 전체 파인튜닝해 금융 QA·MCQA 대응력을 확보했습니다.
+3. **DPO**: SFT 체크포인트에 `DPOTrainer`를 적용해 선호쌍 학습으로 응답 일관성과 안전성을 강화했습니다.
+4. **검증·배포**: HAERAE, KoBEST, ArenaHard, Financial-MMLU-KO 지표를 측정하고, 통과 모델만 RunPod vLLM에 반영합니다.
+
+### 주요 하이퍼파라미터
+| 항목 | SFT 설정 | DPO 설정 |
+| --- | --- | --- |
+| Epoch | 2 | 2 |
+| Global Batch (배치×축적) | 8 × 4 | 8 × 4 |
+| Learning Rate | 1e-5 | 1e-6 |
+| Optimizer | `adamw_torch_fused` | `adamw_torch_fused` |
+| Max Sequence Length | 4,096 | 4,096 |
+| Warmup Ratio | 0.1 | 0.1 |
+| Weight Decay | 0.01 | 0.01 |
+| LR Scheduler | `cosine` | `cosine` |
+| LoRA α / Dropout | - | 16 / 16 |
+| β (DPO) | - | 0.1 |
+
+#### 학습 실행 명령 예시
+```bash
+# Supervised Fine-Tuning (SFT)
+accelerate launch --num_processes=1 scripts/train_sft.py \
+  --model_name Qwen/Qwen2.5-7B-Instruct \
+  --dataset_path rucipheryn/combined-dataset-30K-final-v4 \
+  --max_seq_length 4096 \
+  --learning_rate 1e-5 \
+  --num_train_epochs 2 \
+  --gradient_accumulation_steps 4 \
+  --output_dir outputs/sft-finance
+
+# Direct Preference Optimization (DPO)
+accelerate launch --num_processes=1 scripts/train_dpo.py \
+  --model_name outputs/sft-finance \
+  --dataset_path sssssungjae/dpo_shiba_safety1 \
+  --beta 0.1 \
+  --learning_rate 1e-6 \
+  --num_train_epochs 2 \
+  --gradient_accumulation_steps 4 \
+  --output_dir outputs/dpo-finance
+```
+*RunPod 컨테이너 기준으로 docs/13. 전체 LLM 시행착오.docx에 정리된 설정을 그대로 이용합니다.*
+
+### 체크포인트 및 배포 전략
+*   SFT 결과는 ``sssssungjae/qwen2_5-7b-instruct-finance-full-final-15_15``, DPO 결과는 ``sssssungjae/qwen2.5-dpo-shi2``로 Hub에 업로드하고, `lm-eval-harness`로 재현 가능성을 확보했습니다.
+*   Financial-MMLU-KO 0.7099 → 0.7451 → 0.7495, ArenaHard 72.0 → 69.8 → 71.8 개선 추이를 기록해 성능 상승을 수치화했습니다.
+*   최종 체크포인트는 RunPod vLLM 서버에 탑재하고, Django/FastAPI 백엔드에서 HTTP 호출로 지연시간과 스루풋을 모니터링합니다.
+
+
+
+
+### 모델 성능 벤치마크
+
+| 체크포인트 | Financial-MMLU-KO | HAERAE | KoBEST | HRM8k_GSM8k | HRM8k_MATH | ArenaHard |
+| --- | --- | --- | --- | --- | --- | --- |
+| Qwen/Qwen2.5-7B-Instruct (Base) | 0.7099 | 0.50 | 0.60 | 0.81 | 0.62 | 72.0 |
+| `sssssungjae/qwen2_5-7b-instruct-finance-full-final-15_15` (SFT) | 0.7451 | 0.57 | 0.61 | 0.79 | 0.61 | 69.8 |
+| `sssssungjae/qwen2.5-dpo-shi2` (DPO) | 0.7495 | 0.57 | 0.60 | 0.79 | 0.62 | 71.8 |
+
+#### 모델 선정 및 최종 성능 요약
+KB FinAIssist의 핵심 sLLM은 우수한 한국어 성능과 상업적 활용 가능성을 고려하여 `Qwen/Qwen2.5-7B-Instruct`를 기본 모델로 선정했습니다. 저희 팀의 목표는 이 모델을 KB국민은행의 내규와 금융 데이터에 특화시켜, 여신 업무와 같은 복잡한 금융 질의에 대해 전문가 수준의 답변을 제공하는 사내 AI를 개발하는 것이었습니다.
+
+이를 위해 다음과 같은 2단계 파인튜닝 전략을 적용했습니다.
+1.  **SFT (Supervised Fine-Tuning)**: KB금융 특화 데이터와 고품질 금융 상식 데이터 약 3만 건을 학습시켜, 모델이 금융 도메인 지식을 깊이 있게 이해하도록 했습니다. 이 단계(`sssssungjae/qwen2_5-7b-instruct-finance-full-final-15_15`)에서 금융 지식 평가 지표(Financial-MMLU-KO)가 **0.7099점에서 0.7451점으로 크게 향상**되었습니다.
+2.  **DPO (Direct Preference Optimization)**: SFT 모델을 기반으로, 보다 정제된 답변(Chosen)과 그렇지 않은 답변(Rejected) 쌍을 학습시켜 모델의 응답 스타일을 교정하고 안전성을 강화했습니다.
+
+최종적으로 서비스에 적용된 `sssssungjae/qwen2.5-dpo-shi2` 모델은 Financial-MMLU-KO 점수를 **0.7495점**까지 끌어올려 금융 전문성을 극대화했으며, SFT 단계에서 일시적으로 하락했던 일반 추론 능력(ArenaHard)도 **71.8점**으로 회복했습니다. 이는 최종 모델이 **높은 금융 지식 이해도**와 **안정적인 일반 상식 응답 능력**을 겸비하여, 사내 업무 지원이라는 목표에 가장 잘 부합하는 최적의 결과물임을 의미합니다.
+
+#### 평가 인사이트
+- Financial-MMLU-KO 지표가 0.7099 → 0.7451 → 0.7495로 단계별 상승해 금융 도메인 지식 커버리지가 확장되었습니다.
+- SFT 단계에서 ArenaHard 점수가 일시적으로 69.8까지 하락했으나 DPO 적용 후 71.8로 회복해 응답 선호도 균형을 맞췄습니다.
+- HAERAE/KoBEST는 0.57/0.60 수준을 유지하여 한국어 금융 이슈와 일반 상식에 대한 응답 안정성을 확인했습니다.
+
 
 ---
+
+
+## 평가 및 모니터링 전략
+
+### 오프라인 평가 도구
+*   ``evaluation/performance_evaluator.py``: 120개 QA 세트를 대상으로 MRR, MAP, NDCG, Precision@K 등을 계산하여 릴리스 전 회귀를 점검합니다.
+*   `evaluation/pipeline_tester.py`: LangGraph·Intent·기본 RAG 파이프라인을 비교 테스트하며, 메뉴 기반 시나리오로 카테고리·난이도별 품질을 빠르게 확인합니다.
+*   `evaluation/manage_data.py`: 문서 업로드, 통계, 조건부 삭제 기능을 제공하여 데이터 스토어 상태를 실시간으로 점검합니다.
+
+### 운영 점검 사이클
+1. **일간**: `pipeline_tester.py`의 빠른 테스트(3~5케이스)로 배포 직후 이상 여부를 확인합니다.
+2. **주간**: `performance_evaluator.py` 메뉴 4·5를 활용해 카테고리·난이도별 20~50개 케이스를 재평가합니다.
+3. **월간**: 120개 풀 테스트와 Financial-MMLU-KO, HAERAE, KoBEST, ArenaHard 지표를 재측정해 모델 드리프트를 감시합니다.
+
+### 주요 모니터링 지표
+*   **검색 품질**: Precision@K, Recall@K, MAP, NDCG@K
+*   **응답 품질**: Keyword Overlap, Semantic Similarity, Completeness, Relevance
+*   **시스템 지표**: 추론 레이턴시, GPU 메모리 사용률(평균 85%), RunPod/Elastic Beanstalk 로그 에러율
+
+### 알림 및 리포트
+*   평가 결과는 Notion과 RunPod Dashboard 캡처로 보관하고, 이상치는 ``docs/14. 테스트 계획 및 결과 보고서.docx``에 상세 회고를 남깁니다.
+*   긴급 이슈 발생 시 `evaluation/manage_data.py --action delete-condition`으로 문제 문서를 격리한 뒤 재학습 또는 벡터 재생성을 수행합니다.
+
+
+### RunPod 기반 추론 운영
+*   초기 실험은 RunPod A40 40GB 인스턴스(vLLM 0.6.3)에서 진행해 KV 캐시와 4,096 토큰 컨텍스트 설정을 검증했습니다.
+*   최종 서비스는 RunPod Serverless GPU(H100 80GB)로 승격해 ``sssssungjae/qwen2.5-dpo-shi2`` 체크포인트를 vLLM으로 상시 구동합니다.
+*   FastAPI Orchestrator가 RunPod HTTPS 엔드포인트로 질의와 시스템 프롬프트를 전달하고, LangGraph Supervisor가 스트리밍 응답을 받아 후속 노드에 전달합니다.
+*   RunPod 모니터링 지표(평균 GPU 메모리 사용률 약 85%, 요청 대기열)를 수집해 스케일링과 추론 파라미터를 조정합니다.
+
+#### 운영 파라미터
+| 항목 | 설정 |
+| --- | --- |
+| GPU 메모리 제한 | vLLM `--gpu-memory-utilization 0.85` |
+| 최대 토큰 길이 | 4,096 tokens (필요 시 8K 이상 증설 실험 진행) |
+| 서비스 엔드포인트 | `https://api.runpod.ai/v2/{pod-id}` + FastAPI `/healthcheck` 복합 모니터링 |
+| 로깅 정책 | `--disable-log-requests`로 추론 요청 로그 최소화, CloudWatch 보조 수집 |
+| 헬스체크 | RunPod `/v1/models` 응답 + LangGraph 세션 헬스 프로브 |
+
+#### 장애 대응 전략
+*   RunPod 응답 지연이 3초를 초과하면 Pinecone 검색 결과로 폴백하고, 실패 건은 ``docs/14. 테스트 계획 및 결과 보고서.docx``에 원인 분석을 기록합니다.
+*   GPU 상태 이상이 감지되면 RunPod Dashboard 스냅샷을 저장하고, 동일 설정의 예비 파드로 환경 변수를 전환해 무중단을 유지합니다.
+*   모델 갱신 시 vLLM의 Warm Reload로 컨텍스트 캐시를 사전 준비하고, FastAPI는 그레이스풀 셧다운으로 세션 손실을 방지합니다.
+
+
+## 개발 흐름도 (DevOps Flow)
+
+![데이터 흐름도](images/system/devops_flow.png)
+
+1. Local
+    * 개발자가 로컬 환경에서 코드를 작성한 뒤 GitHub 저장소에 Push한다.
+
+
+2. GitHub
+    * Pull Request(PR) -> Main Branch Merge 과정을 통해 배포 준비가 완료된다.
+
+3. CI (Continuous Integration)
+    * GitHub Actions가 자동 실행되어 다음 절차가 수행된다.
+        * 코드 빌드 및 유닛 테스트 실행
+        * Docker 이미지 생성 및 Docker Hub 업로드
+
+4. CD (Continuous Deployment)
+    * Elastic Beanstalk이 Docker Hub에서 최신 이미지를 가져와 자동 배포한다.
+    * 배포된 컨테이너는 Amazon EC2에서 실행되며, 정적/비정형 데이터는 Amazon S3와 연동된다.
+
+5. 자동화 동작 요약
+    * 개발자가 GitHub에 코드 Push
+    * GitHub Actions(CI) 실행 -> 빌드 & 테스트 -> Docker 이미지 생성
+    * Docker Hub에 이미지 업로드
+    * Elastic Beanstalk이 이미지를 가져와 EC2/S3에 자동 배포
+    * Django 서비스가 새로운 버전으로 업데이트
+
+
+---
+
+
+
 
 ## 🚶 사용자 흐름도 (User Flow)
 
-TBD
+![사용자 흐름도](images/system/user_flow.png)
+
+1. 사용자 인증
+    * 사용자는 Google OAuth 2.0을 통해 인증 후 HTTPS 요청을 전송한다.
+
+
+2. 요청 전달
+    * AWS Route 53이 사용자의 요청을 받아 Amazon EC2 인스턴스로 전달한다.
+
+3. 애플리케이션 서버 처리
+    * EC2 내부에서 Django 서버(Nginx + Gunicorn)가 요청을 수신한다.
+    * Django는 내부적으로 FastAPI 모듈을 호출하여 후속 처리를 진행한다.
+
+4. 데이터 및 AI 모듈 연동
+    * FastAPI는 Chroma DB를 조회하고, sLLM / Machine Learning 모듈을 활용해 질의응답 및 분석을 수행한다.
+    * 필요한 경우 Amazon DB(MySQL)와 Amazon S3를 통해 데이터를 조회하거나 저장한다.
+
+5. 응답 반환
+    * 최종 결과를 JSON 형태로 변환하여 사용자에게 반환한다.
+
 
 ---
-## 🏠 시스템 구성도
-TBD
+## 🏠 총 시스템 구성도
 
----
+![시스템 구성도](images/system/all_system_flow.png)
+
+### 구성 요소
+
+#### 클라이언트 (Client)
+
+* 컴포넌트
+    * Chrome 브라우저
+
+* 인터페이스
+    * Google Cloud OAuth 2.0 (인증 처리)
+    * JSON 데이터 전송 (HTTPS 기반 통신)
+
+#### AWS Cloud
+
+* EC2 인스턴스
+    * Nginx: 리버스 프록시 및 정적 파일 제공
+    * Gunicorn: WSGI 서버로 FastAPI 실행 관리
+    * Django + FastAPI: 백엔드 애플리케이션, 사용자 요청 처리 및 비즈니스 로직 실행
+
+* LangGraph 모델
+    * Pinecone: 벡터 데이터베이스 기반 검색
+    * Prompt Engineering: AI 프롬프트 최적화 및 응답 품질 향상
+
+#### 데이터베이스
+
+* Amazon DB (MySQL)
+    * 구조적 데이터 저장 및 조회
+
+#### 외부 서비스
+* RunPod
+    * sLLM 실행 환경 제공 (대규모 언어모델 추론)
+
+
+
+
+## 📖 주요 기능 사용법
+KB FinAIssist의 주요 기능 사용 시나리오는 다음과 같습니다.
+
+### 금융 Q&A 챗봇
+1.  Google 계정으로 로그인합니다.
+2.  메인 화면의 챗봇 입력창에 금융 상품, 내규, 또는 법률에 대해 질문합니다. (예: "주택담보대출 LTV 규제에 대해 알려줘")
+3.  AI 챗봇이 질문 의도를 파악하여 RAG 파이프라인을 통해 내부 문서에서 근거를 찾습니다.
+4.  sLLM이 생성한 답변과 함께, 참고한 원본 문서의 출처가 함께 제공되어 신뢰성을 보장합니다.
+
+### 머신러닝 기반 여신 심사
+1.  상단 메뉴에서 '여신 심사' 탭으로 이동합니다.
+2.  고객의 재무 및 비재무 정보를 양식에 맞게 입력합니다.
+3.  '심사 시작' 버튼을 클릭하면, 머신러닝 모델이 입력된 데이터를 분석하여 대출 적격 여부와 리스크를 평가합니다.
+4.  심사 결과는 요약 리포트 형태로 제공되어 빠른 의사결정을 돕습니다.
 
 ## ✨ 구현 결과
 | 구현 화면 | 역할 | 
@@ -215,9 +527,14 @@ TBD
 | ![로그인 화면](images/webapp/login.png) | 로그인 페이지 |
 | ![메인 화면](images/webapp/main.png) | 메인 화면 |
 | ![문서 참조 화면](images/webapp/main2.png) | 메인 화면 2 |
-| ![image4](images/image4.png) | TBD |
-| ![image5](images/image5.png) | TBD |
-| ![image6](images/image6.png) | TBD |
+| ![챗봇1](images/webapp/chatbot1.png) | 챗봇 1 |
+| ![챗봇2](images/webapp/chatbot2.png) | 자주묻는 질문 |
+| ![챗봇3](images/webapp/chatbot3.png) | 출처, 색 변경 |
+| ![챗봇4](images/webapp/chatbot4.png) | 출처 페이지 팝업 |
+| ![챗봇5](images/webapp/loan1.png) |  여신심사, 입력 |
+| ![챗봇6](images/webapp/loan2.png) | 여신심사, 고객정보 |
+| ![챗봇7](images/webapp/loan3.png) | 여신심사, 결과 |
+
 
 
 ## 💯 성능 개선
@@ -226,44 +543,33 @@ TBD
 
 
 ### 프롬프트 개선
-#### TBD
 
-TBD
+#### 설계 개요
+LangGraph 기반 Supervisor-에이전트 구조에 맞춰 프롬프트를 재정비해 질문 유형별 의사결정 기준을 명문화했다. 관리자 노드는 활용 가능한 도구와 우선순위를 구체적으로 안내하고, 문서 기반 하위 에이전트에는 규정 준수형 답변 절차를 명시해 응답 일관성을 높였다.
 
 | 적용 기법 | 적용 위치 또는 특징 요약 |
 | --- | --- |
-| Role Prompting | TBD |
-| Chain-of-Thought Prompting | TBD |
-| Few-Shot Prompting | TBD |
-| Instruction Prompting | TBD |
-| Format-Constrained Prompting | TBD |
-| User-Centered Prompting | TBD |
+| Role Prompting | `AI/src/langgraph/prompts.yaml`의 `system_prompts.supervisor.system`에서 중앙 관리자 역할과 사용할 도구(answer, rag_search, product_extraction, context_answer)를 명확히 선언해 각 에이전트의 책임을 고정했습니다. |
+| Chain-of-Thought Prompting | 동일 프롬프트 말미에 도구 선택 근거를 단계적으로 서술하도록 지시해 판단 흐름을 노출하고 자기검증을 유도합니다. |
+| Few-Shot Prompting | `routing_prompts.main_routing`과 `additional_routing`에 질문 유형별 대표 시나리오를 나열해 실제 창구 질문 예시를 기준으로 분기를 학습하게 구성했습니다. |
+| Instruction Prompting | `system_prompts.rag_system.system`과 `routing_prompts.context_answer`에서 문서 활용 절차, 금지사항, 문장 수 제한 등을 명문화해 금융 규정 답변 시 품질을 표준화했습니다. |
+| Format-Constrained Prompting | 라우팅 프롬프트에서 출력값을 사전 정의된 옵션 문자열로 제한하고, `routing_prompts.context_analysis`는 YES/NO 2값만 허용해 포맷 오류를 방지합니다. |
+| User-Centered Prompting | `{query}`와 `{previous_context}`를 중심에 배치해 이용자 질문과 이전 대화 맥락을 우선 고려하도록 안내하고, 상담 어조 준수를 명시해 대화 몰입감을 높였습니다. |
 
 #### 챗봇 프롬프트
-
-TBD
-
----
-
-### **🍀 기대효과**
-
-**1. 신입 행원의 '업무 적응 기간' 획기적 단축**
-*   AI 어시스턴트의 실시간 질의응답을 통해, 복잡한 여신 업무와 상품 지식을 스스로 학습하는 **'자기주도적 OJT'** 환경을 제공합니다.
-*   이를 통해 기존 2년에 달하던 창구 업무 기간을 단축하고, 전문 인력을 **핵심 직무에 조기 투입**할 수 있는 가능성을 엽니다.
-
-**2. 금융 업무의 '정확성'과 '일관성' 확보**
-*   선임이나 부서에 따라 미묘하게 달랐던 업무 지식을, **표준화된 데이터 기반의 AI**가 일관되게 제공함으로써 업무 오류를 줄이고 전체적인 심사 품질을 상향 평준화합니다.
-*   RAG 시스템을 통해 모든 답변에 **명확한 근거**(약관, 규정)를 제시하여, 심사 결정의 투명성과 책임성을 강화합니다.
-
-**3. '데이터 기반' 의사결정 문화 확산**
-*   복잡한 보고서 양식 작성의 부담을 AI가 대신 짊어짐으로써, 행원은 **데이터를 분석하고 인사이트를 도출하는 본질**에 더 많은 시간을 쏟을 수 있습니다.
-*   정량적 데이터 분석과 정성적 AI 의견을 종합하여, 더 객관적이고 합리적인 의사결정을 내리는 문화를 정착시킵니다.
-
-**4. sLLM을 통한 '데이터 주권' 및 '비용 효율성' 확보**
-*   모든 AI 모델과 데이터를 **내부망(On-Premise)에서 운영**하여, 민감한 금융 정보의 외부 유출을 원천 차단하고 완벽한 데이터 주권을 확보합니다.
-*   고가의 외부 LLM API 대신 자체 sLLM을 활용함으로써, 장기적인 운영 비용을 획기적으로 절감합니다.
+- `system_prompts.supervisor`는 질문 분석 -> 도구 선택 -> reasoning 공개 순서를 강제해 신규 직원 문의에도 안정적으로 대응합니다.
+- `system_prompts.rag_system`은 검색 컨텍스트만으로 5문장 이내의 근거 기반 답변을 작성하도록 제한해 규제 문서 인용 시 왜곡을 줄입니다.
+- `routing_prompts.context_answer`와 `context_analysis`는 이전 발화 요약을 입력값으로 받아 연속 질의에도 맥락 유지 여부를 판정하고, 필요 시 추가 검색으로 자연스럽게 전환시킵니다.
 
 ---
+
+### 시행착오와 개선 히스토리
+*   **데이터 정제 재설계**: 초기에 PDF 문서에서 각주·머리글이 혼입되어 답변 왜곡이 발생해, `docs/12. LLM 활용 프롬프트 전략.docx`에 정리된 파서 기반 전처리와 문장 재분할 파이프라인을 도입했습니다.
+*   **RunPod 메모리 한계 해결**: A40 40GB 환경에서 vLLM 메모리 사용률이 85%에 근접하며 배치 크기가 제한되어, Unsloth 최적화와 LoRA 파라미터 조정 후 H100 80GB Serverless 환경으로 승격했습니다.
+*   **선호쌍 품질 관리**: DPO 학습 초기에는 `chosen`·`rejected`가 의미상 유사한 케이스가 다수 발견되어, `docs/13. 전체 LLM 시행착오.docx`의 가이드에 따라 금융 규제·상품 문의 위주로 선별하고 안전성 데이터(hh-rlhf-safety)로 보강했습니다.
+*   **평가지표 피드백 루프**: ArenaHard 점수가 SFT 이후 69.8까지 하락한 경험을 바탕으로 DPO 재학습을 진행해 71.8로 회복시켰으며, Financial-MMLU-KO도 0.7099 → 0.7451 → 0.7495로 개선되었습니다.
+*   **평가 자동화 정비**: `lm-eval-harness` CLI와 RunPod 로그를 연계해 성능 리포트를 자동 생성하고, 기준 미달 시 재학습 파이프라인을 트리거하도록 설정했습니다.
+
 
 ### **🌱 향후 발전 가능성 (Future Work)**
 
@@ -306,8 +612,4 @@ TBD
 
 *   **조성재:** 
 
-*   **이승혁:** 
-
-
-=======
-Repository for SKN14-Final-3Team
+*   **이승혁:**
